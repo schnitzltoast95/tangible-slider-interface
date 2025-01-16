@@ -1,18 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Globalization;
 using System.IO.Ports;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace TSI
 {
@@ -20,7 +8,7 @@ namespace TSI
     {
         private List<QuestionnaireItem> _items;
         private int _currentIndex = 0;
-        private SerialPort _arduinoPort;
+        public SerialPort _arduinoPort;
         public event Action<double, double> OnItemSentToArduino;
 
         public ParticipantView(List<QuestionnaireItem> items, SerialPort arduinoPort)
@@ -61,7 +49,11 @@ namespace TSI
         {
             if (_arduinoPort != null && _arduinoPort.IsOpen)
             {
-                string message = $"{item.ItemCount}:{item.Threshold}";
+                var thresh = item.Threshold.ToString(CultureInfo.InvariantCulture);
+                string message = $"{item.ItemCount}:{thresh}";
+                if (message.Length > 29)
+                    throw new ArgumentException("message too long for arduino! max 29 characters, but got " +
+                                                message.Length);
                 _arduinoPort.WriteLine(message);
                 OnItemSentToArduino?.Invoke(item.ItemCount, item.Threshold);
             }
@@ -73,10 +65,10 @@ namespace TSI
 
         public void QuestionnaireForward()
         {
-            if (_currentIndex < _items.Count - 1)
+            if (_currentIndex < _items.Count)
             {
-                _currentIndex++;
                 LoadQuestionnaireItem(_currentIndex);
+                _currentIndex++;
             }
             else
             {

@@ -1,19 +1,12 @@
-﻿using Microsoft.Win32;
-using System.Data;
+﻿using System.Data;
 using System.IO;
 using System.IO.Ports;
-using System.Text;
 using System.Windows;
-using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Win32;
 
 namespace TSI
 {
@@ -27,7 +20,7 @@ namespace TSI
         private Color error = Color.FromArgb(186, 26, 26, 1);
         private Color tertiary = Color.FromArgb(175, 207, 171, 1);
         private DataTable sliderDataTable;
-        private SerialPort _arduinoPort;
+        private SerialPort? _arduinoPort;
         private double currentItemCount = -1.00;
         private double currentThreshold = 0.00;
         private ParticipantView _participantView;
@@ -55,12 +48,19 @@ namespace TSI
 
        private void MainWindow_Closed(object sender, EventArgs e) 
         {
-            SaveConditions();
-
             if (_arduinoPort != null && _arduinoPort.IsOpen)
             {
                 _arduinoPort.Close();
             }
+            
+            var check = MessageBox.Show(
+                $"Do you want to export the collected data before closing the application?", 
+                "EXPORT DATA?", 
+                MessageBoxButton.YesNo, MessageBoxImage.Error
+            );
+            
+            if (check == MessageBoxResult.Yes)
+                SaveConditions();
         }
 
 
@@ -116,6 +116,8 @@ namespace TSI
                 try
                 {
                     _arduinoPort.Open();
+                    if (_participantView != null) 
+                        _participantView._arduinoPort = _arduinoPort;
                     MessageBox.Show($"Connected to {selectedPort}", "Connection", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch (Exception ex)
@@ -156,9 +158,9 @@ namespace TSI
                 pressed = true;             
             }
 
-            if (double.TryParse(valueString, out double sliderValue))
+            if (int.TryParse(valueString, out int sliderValue))
             {
-                double scaledValue = sliderValue * currentItemCount / 1023.0;
+                double scaledValue = sliderValue * (currentItemCount - 1) / 1024.0;
 
                 IndicateVibration(scaledValue, currentThreshold);
                 if (pressed)
@@ -168,15 +170,15 @@ namespace TSI
                     string condition = ConditionPanel.Children.OfType<RadioButton>().FirstOrDefault(rb => rb.IsChecked == true)?.Content?.ToString() ?? "no con";
                     int items = (int)currentItemCount;
                     double threshold = currentThreshold;
-                    bool shouldVibrate = ShouldVibrate(sliderValue, threshold);
+                    bool shouldVibrate = ShouldVibrate(scaledValue, threshold);
 
                     sliderDataTable.Rows.Add(questionnaire, participantID, condition, DateTime.Now, sliderValue,
-                                     sliderValue * items / 1023.0, items, threshold, shouldVibrate);
+                        scaledValue, items, threshold, shouldVibrate);
                     _participantView?.QuestionnaireForward();
                 }
                 Raw_Value.Text = valueString;
                 Slider_Visualizer.Value = sliderValue;
-                Data_Value.Text = (sliderValue * currentItemCount / 1023.0).ToString("F2");
+                Data_Value.Text = scaledValue.ToString("F2");
                 
                 UpdateZonesOnThresholdChange();
             }
@@ -199,7 +201,7 @@ namespace TSI
             DataGridSliderValues.ItemsSource = sliderDataTable.DefaultView;
         }
 
-        private void StartButton_Click(object sender, RoutedEventArgs e)
+        private void InitParticipantView()
         {
             if (importedItems == null || importedItems.Count == 0)
             {
@@ -210,6 +212,11 @@ namespace TSI
             _participantView = new ParticipantView(importedItems, _arduinoPort);
             _participantView.OnItemSentToArduino += UpdateSliderValues;
             _participantView.Show();
+        }
+
+        private void StartButton_Click(object sender, RoutedEventArgs e)
+        {
+            InitParticipantView();
         }
 
         private void ImportQuestionnaireButton_Click(object sender, RoutedEventArgs e)
@@ -238,6 +245,7 @@ namespace TSI
                     currentThreshold = !string.IsNullOrWhiteSpace(importedItems[0].Threshold.ToString()) ? importedItems[0].Threshold : -1;
                     Threshold_Value.Text = currentThreshold.ToString();
                     UpdateZonesOnThresholdChange();
+                    InitParticipantView();
                 }
             }
         }
@@ -283,15 +291,26 @@ namespace TSI
 
         private void SaveConditions()
         {
-            string filePath = "conditions.json";
-            try
+            SaveFileDialog saveFileDialog = new SaveFileDialog
             {
-                string json = System.Text.Json.JsonSerializer.Serialize(conditions);
-                File.WriteAllText(filePath, json);
-            }
-            catch (Exception ex)
+                Title = "Select a File",
+                Filter = "Json Files (*.json)|*.txt|All Files (*.*)|*.*",
+                InitialDirectory = @"C:\", // Optional: Set the initial directory
+                FileName = "conditions.json"
+            };
+
+            if (saveFileDialog.ShowDialog() == true) // ShowDialog() returns a nullable bool
             {
-                MessageBox.Show($"Failed to save conditions: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                string filePath = saveFileDialog.FileName;
+                try
+                {
+                    string json = System.Text.Json.JsonSerializer.Serialize(conditions);
+                    File.WriteAllText(filePath, json);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to save conditions: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
@@ -373,14 +392,14 @@ namespace TSI
             Point trackPosition = transform.Transform(new Point(0, 0));
             double trackOffset = trackPosition.X;
 
-            double stepSize = trackWidth / (items - 1);
+            double stepSize = trackWidth / (items - 1); // left is first and right is last, so -1
             double zoneWidth = stepSize * threshold;
 
             for (int i = 0; i < items; i++)
             {
                 double zoneCenter = i * stepSize;
-                double zoneStart = zoneCenter - (zoneWidth / 2);
-                double zoneEnd = zoneCenter + (zoneWidth / 2);
+                double zoneStart = zoneCenter - zoneWidth;
+                double zoneEnd = zoneCenter + zoneWidth;
 
                 if (zoneStart < 0) zoneStart = 0;
                 if (zoneEnd > trackWidth) zoneEnd = trackWidth;

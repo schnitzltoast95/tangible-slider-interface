@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows;
 
 public class QuestionnaireItem
 {
-    public string Title { get; set; }
-    public string Description { get; set; }
-    public string LabelLeft { get; set; }
-    public string LabelRight { get; set; }
+    public string? Title { get; set; }
+    public string? Description { get; set; }
+    public string? LabelLeft { get; set; }
+    public string? LabelRight { get; set; }
     public int ItemCount { get; set; }
     public double Threshold { get; set; }
 }
@@ -26,7 +27,16 @@ public class CsvParser
             while (!reader.EndOfStream)
             {
                 var line = reader.ReadLine();
-                var values = line.Split(';');
+                string?[] values = line.Split(';');
+
+                if (values.Length < 6)
+                {
+                    MessageBox.Show(
+                        "Invalid CSV file, row has less than 6 fields.", 
+                        "Error", MessageBoxButton.OK, MessageBoxImage.Error
+                    );
+                    return null;
+                }
 
                 // Erstelle ein neues QuestionnaireItem und füge es der Liste hinzu
                 var item = new QuestionnaireItem
@@ -38,6 +48,13 @@ public class CsvParser
                     ItemCount = int.TryParse(values[4], out int itemCount) ? itemCount : 0,
                     Threshold = double.TryParse(values[5], out double threshold) ? threshold : 0.0
                 };
+                
+                if (item.Threshold > 0.5) 
+                    // TODO: demote to warning
+                    MessageBox.Show(
+                        "No thresholds above 50%", 
+                        "Error", MessageBoxButton.OK, MessageBoxImage.Error
+                    );
 
                 questionnaireItems.Add(item);
             }
