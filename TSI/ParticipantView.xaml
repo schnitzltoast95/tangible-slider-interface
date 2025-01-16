@@ -1,0 +1,59 @@
+﻿<Window x:Class="TSI.ParticipantView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Participant View" Height="400" Width="600">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="GlobalStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <!-- Grid für flexibles Layout -->
+    <Grid>
+        <!-- Grid mit zwei Zeilen: Inhalt oben, Buttons unten -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <!-- Hauptinhalt dehnt sich aus -->
+            <RowDefinition Height="Auto" />
+            <!-- Button-Bereich bleibt unten -->
+        </Grid.RowDefinitions>
+
+        <!-- Inhalt (Titel, Beschreibung, Labels) -->
+        <StackPanel Name="ContentPanel" Grid.Row="0" Margin="10">
+            <!-- Titel des Fragebogens -->
+            <TextBlock Name="TitleText" FontSize="20" FontWeight="Bold" TextAlignment="Center" Margin="0,0,0,10"/>
+
+            <!-- Beschreibung -->
+            <TextBlock Name="DescriptionText" FontSize="16" TextAlignment="Center" Margin="0,0,0,20"/>
+
+            <!-- Labels -->
+            <Grid Margin="20">
+                <!-- Zwei Spalten: eine für das linke Label, eine für das rechte Label -->
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <!-- Linke Spalte -->
+                    <ColumnDefinition Width="*" />
+                    <!-- Rechte Spalte -->
+                </Grid.ColumnDefinitions>
+
+                <!-- Linkes Label, linksbündig -->
+                <TextBlock Name="LeftLabel" FontSize="14" HorizontalAlignment="Left" TextAlignment="Right" Grid.Column="0" Margin="10,0,10,0" />
+
+                <!-- Rechtes Label, rechtsbündig -->
+                <TextBlock Name="RightLabel" FontSize="14" HorizontalAlignment="Right" TextAlignment="Left" Grid.Column="1" Margin="10,0,10,0" />
+            </Grid>
+        </StackPanel>
+
+        <!-- Button Bereich -->
+        <Border Background="#FDF7F0" Padding="10" HorizontalAlignment="Stretch" Grid.Row="1">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="20,0,20,20">
+                <Button Name="ContinueButton" Content="Continue" Width="100" Height="40" Background="#EAAE05" Foreground="White" Margin="10" Click="ContinueButton_Click"/>
+                <Button Name="FinishButton" Content="Finish" Width="100" Height="40" Background="#EAAE05" Foreground="White" Margin="10" Click="FinishButton_Click"/>
+                <!-- DEBUG_CONTINUE Button für die Navigation zur nächsten Zeile im CSV -->
+                <Button Content="DEBUG_CONTINUE" Width="120" Height="40" Background="#AE4F4F" Foreground="White" Margin="10" Click="DebugContinueButton_Click"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
