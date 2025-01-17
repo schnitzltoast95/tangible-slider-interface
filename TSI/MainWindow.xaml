@@ -56,7 +56,10 @@
                         <StackPanel Name="ConditionPanel" Orientation="Vertical" HorizontalAlignment="Left" Margin="10, 5, 0, 0" >
                         </StackPanel>
                     </ScrollViewer>
-                    <Button Content="Setup Conditions" Width="190" Height="40" Background="#F2E0C0" Margin="5" Click="SetupConditionsButton_Click"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Content="Setup" Width="120" Height="40" Background="#F2E0C0" Margin="5" Click="SetupConditionsButton_Click"/>
+                        <Button Content="Import" Width="120" Height="40" Background="#F2E0C0" Margin="5" Click="LoadConditions"/>
+                    </StackPanel>
                 </StackPanel>
 
                 <!-- Slider Control -->

@@ -292,45 +292,32 @@ namespace TSI
             }
         }
 
-        private void SaveConditions()
+        private void LoadConditions(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog
+            var openFileDialog = new Microsoft.Win32.OpenFileDialog
             {
-                Title = "Select a File",
-                Filter = "Json Files (*.json)|*.txt|All Files (*.*)|*.*",
-                InitialDirectory = @"C:\", // Optional: Set the initial directory
-                FileName = "conditions.json"
+                Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*",
+                InitialDirectory = AppDomain.CurrentDomain.BaseDirectory,
+                Title = "Select a Conditions File"
             };
 
-            if (saveFileDialog.ShowDialog() == true) // ShowDialog() returns a nullable bool
+            if (openFileDialog.ShowDialog() == true)
             {
-                string filePath = saveFileDialog.FileName;
-                try
-                {
-                    string json = System.Text.Json.JsonSerializer.Serialize(conditions);
-                    File.WriteAllText(filePath, json);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Failed to save conditions: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-        }
+                string filePath = openFileDialog.FileName;
 
-        private void LoadConditions()
-        {
-            string filePath = "conditions.json";
-            if (File.Exists(filePath))
-            {
-                try
+                if (File.Exists(filePath))
                 {
-                    string json = File.ReadAllText(filePath);
-                    conditions = System.Text.Json.JsonSerializer.Deserialize<List<string>>(json) ?? new List<string>();
-                    UpdateConditionDisplay();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Failed to load conditions: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    try
+                    {
+                        string json = File.ReadAllText(filePath);
+                        conditions = System.Text.Json.JsonSerializer.Deserialize<List<string>>(json) ?? new List<string>();
+
+                        UpdateConditionDisplay();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Failed to load conditions: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
         }
