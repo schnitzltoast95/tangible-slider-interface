@@ -37,9 +37,6 @@ namespace TSI
                 RightLabel.Text = !string.IsNullOrWhiteSpace(item.LabelRight) ? item.LabelRight : "";
                 RightLabel.Visibility = string.IsNullOrWhiteSpace(item.LabelRight) ? Visibility.Hidden : Visibility.Visible;
 
-                FinishButton.Visibility = index == _items.Count - 1 ? Visibility.Visible : Visibility.Hidden;
-                ContinueButton.Visibility = index == _items.Count - 1 ? Visibility.Hidden : Visibility.Visible;
-
                 SendItemToArduino(item);
             }
 
@@ -74,17 +71,6 @@ namespace TSI
             {
                 MessageBox.Show("Keine weiteren Items vorhanden.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
             }
-        }
-
-        private void DebugContinueButton_Click(object sender, RoutedEventArgs e) => QuestionnaireForward();
-
-        private void ContinueButton_Click(object sender, RoutedEventArgs e) => MessageBox.Show("Weiter zur nächsten Aktion.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
-
-        private void FinishButton_Click(object sender, RoutedEventArgs e)
-        {
-            _currentIndex = 0;
-            // MessageBox.Show("Fragebogen abgeschlossen.", "Abschluss", MessageBoxButton.OK, MessageBoxImage.Information);
-            this.Close();
         }
     }
 }
