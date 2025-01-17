@@ -127,6 +127,7 @@ namespace TSI
 
         private void ExportConditionClick(object sender, RoutedEventArgs e)
         {
+            Conditions.Clear();
             foreach (UIElement element in ConditionPanel.Children)
             {
                 if (element is StackPanel panel)
