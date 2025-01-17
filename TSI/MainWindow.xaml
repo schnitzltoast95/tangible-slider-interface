@@ -127,7 +127,7 @@
                 <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
                     <Button Content="Delete Last" Width="105" Margin="10" Background="#AE4F4F" Foreground="White"/>
                     <Button Content="Delete All" Width="105" Margin="10" Background="#AE4F4F" Foreground="White"/>
-                    <Button Content="Export Data" Width="105" Margin="10" Background="#EAAE05" Foreground="White"/>
+                    <Button Content="Export Data" Width="105" Margin="10" Background="#EAAE05" Foreground="White" Click="OnExportDataClick"/>
                 </StackPanel>
             </Grid>
         </Border>

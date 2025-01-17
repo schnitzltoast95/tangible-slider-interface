@@ -1,6 +1,8 @@
 ﻿using System.Data;
 using System.IO;
 using System.IO.Ports;
+using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -60,7 +62,8 @@ namespace TSI
             );
             
             if (check == MessageBoxResult.Yes)
-                SaveConditions();
+                // SaveConditions();
+                SaveData();
         }
 
 
@@ -313,6 +316,43 @@ namespace TSI
                 }
             }
         }
+        
+        private void SaveData()
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Title = "Select a Destination",
+                Filter = "CSV Files (*.csv)|*.csv|All Files (*.*)|*.*",
+                InitialDirectory = @AppDomain.CurrentDomain.BaseDirectory, // Optional: Set the initial directory
+                FileName = string.IsNullOrEmpty(ParticipantID.Text) ? "sliderData.csv" : $"{ParticipantID.Text}.csv"
+            };
+
+            if (saveFileDialog.ShowDialog() == true) // ShowDialog() returns a nullable bool
+            {
+                string filePath = saveFileDialog.FileName;
+                try
+                {
+                    StringBuilder sb = new StringBuilder();
+                    IEnumerable<string> columnNames = sliderDataTable.Columns.Cast<DataColumn>()
+                        .Select(column => column.ColumnName);
+                    sb.AppendLine(string.Join(",", columnNames));
+
+                    foreach (System.Data.DataRow row in sliderDataTable.Rows)
+                    {
+                        IEnumerable<string?> fields = row.ItemArray.Select(field =>
+                            field == null ? string.Empty : field.ToString()); // Handle null values
+                        sb.AppendLine(string.Join(",", fields));
+                    }
+                    File.WriteAllText(filePath, sb.ToString());
+                    MessageBox.Show("Data saved successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to save data: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
 
         private void LoadConditions()
         {
@@ -418,5 +458,7 @@ namespace TSI
             }
         }
 
+        private void OnExportDataClick(object sender, RoutedEventArgs e) => SaveData();
+        
     }
 }
