@@ -9,6 +9,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Microsoft.Win32;
+using MsgBoxEx;
 
 namespace TSI
 {
@@ -476,8 +477,8 @@ namespace TSI
                 throw new InvalidOperationException("Table is empty. No last row to delete.");
             }
             
-            var result = MessageBox.Show("The last data values collected will be deleted.", 
-                "DELETE LAST DATA VALUES?", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            var result = MessageBoxEx.Show("The last data values collected will be deleted.", 
+                "DELETE LAST DATA VALUES" , "Delete" , "Cancel", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
             if (result == MessageBoxResult.Yes)
                 sliderDataTable.Rows.RemoveAt(sliderDataTable.Rows.Count - 1);

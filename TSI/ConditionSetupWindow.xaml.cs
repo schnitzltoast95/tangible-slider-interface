@@ -101,11 +101,37 @@ namespace TSI
                 BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#D0C5B4")),
                 Padding = new Thickness(5, 5, 0, 5)
             };
+            
+            Button deleteButton = new Button
+            {
+                Content = "🗑", // Icon-Inhalt
+                Width = 30,
+                Height = 30,
+                Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#AE4F4F")),
+                Foreground = Brushes.White,
+                Margin = new Thickness(10, 0, 0, 0) // Abstand nach links
+            };
+            
+            deleteButton.Tag = newConditionPanel;
+            deleteButton.Click += OnDeleteConditionClicked;
 
             newConditionPanel.Children.Add(conditionLabel);
             newConditionPanel.Children.Add(conditionTextBox);
+            newConditionPanel.Children.Add(deleteButton);
 
             ConditionPanel.Children.Add(newConditionPanel);
+        }
+
+        private void OnDeleteConditionClicked(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button deleteButton)
+            {
+                var associatedPanel = deleteButton.Tag as StackPanel;
+                if (associatedPanel != null && ConditionPanel.Children.Contains(associatedPanel))
+                {
+                    ConditionPanel.Children.Remove(associatedPanel);
+                }
+            }
         }
     }
 

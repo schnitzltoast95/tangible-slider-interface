@@ -25,11 +25,9 @@
                     </StackPanel>
                 </ScrollViewer>
 
-                <!-- Rechtes StackPanel: Enthält nur den Plus-Button -->
-                <StackPanel VerticalAlignment="Bottom" Margin="0,0,0,10">
-                    <Button Content="+" Width="30" Height="30" Background="#EAAE05" Foreground="White" Click="AddConditionButton_Click" />
-                </StackPanel>
             </StackPanel>
+            
+            <Button Content="+" Width="30" Height="30" Background="#EAAE05" Foreground="White" Click="AddConditionButton_Click" />
 
             <!-- Save Button -->
             <Button Content="Save" Width="150" Height="40" Background="#EAAE05" Foreground="White" HorizontalAlignment="Center" Margin="20,10,0,0" Click="SaveButton_Click"/>
