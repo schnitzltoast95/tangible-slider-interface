@@ -4,6 +4,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSI", "TSI\TSI.csproj", "{B3E21785-7946-4616-A8BF-1BB357A3C85C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBD}") = "WpfMessageBoxEx", "WpfMessageBoxEx\WpfMessageBoxEx.csproj", "{B3E21785-7946-4616-A8BF-1BB357A3C85D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

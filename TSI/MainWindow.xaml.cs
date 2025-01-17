@@ -1,6 +1,8 @@
 ﻿using System.Data;
+using System.Globalization;
 using System.IO;
 using System.IO.Ports;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -60,7 +62,7 @@ namespace TSI
             );
             
             if (check == MessageBoxResult.Yes)
-                SaveConditions();
+                SaveDataTable();
         }
 
 
@@ -331,6 +333,53 @@ namespace TSI
                 }
             }
         }
+        
+        private void SaveDataTable()
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Title = "Save CSV File",
+                Filter = "CSV Files (*.csv)|*.csv|All Files (*.*)|*.*",
+                InitialDirectory = AppDomain.CurrentDomain.BaseDirectory,
+                FileName = string.IsNullOrWhiteSpace(ParticipantID.Text) ? "sliderData.csv" : $"{ParticipantID.Text}.csv"
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                string filePath = saveFileDialog.FileName;
+
+                var originalCulture = Thread.CurrentThread.CurrentCulture;
+                Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
+                try
+                {
+                    StringBuilder sb = new StringBuilder();
+
+                    // Get column names and append to the StringBuilder
+                    IEnumerable<string> columnNames = sliderDataTable.Columns.Cast<DataColumn>()
+                        .Select(column => column.ColumnName);
+                    sb.AppendLine(string.Join(",", columnNames));
+
+                    // Iterate through rows and append each row's data
+                    foreach (System.Data.DataRow row in sliderDataTable.Rows)
+                    {
+                        IEnumerable<string> fields = row.ItemArray.Select(field => field.ToString());
+                        sb.AppendLine(string.Join(",", fields));
+                    }
+
+                    // Write the content to the selected file
+                    File.WriteAllText(filePath, sb.ToString());
+                }
+                catch (Exception ex)
+                {
+                    throw new IOException($"Failed to save data to {filePath}.", ex);
+                }
+                finally
+                {
+                    Thread.CurrentThread.CurrentCulture = originalCulture;
+                }
+            }
+        }
 
 
 
@@ -418,5 +467,36 @@ namespace TSI
             }
         }
 
+        private void ExportDataTable(object sender, RoutedEventArgs e) => SaveDataTable();
+
+        private void OnDeleteLastClicked(object sender, RoutedEventArgs e)
+        {
+            if (sliderDataTable == null || sliderDataTable.Rows.Count == 0)
+            {
+                throw new InvalidOperationException("Table is empty. No last row to delete.");
+            }
+            
+            var result = MessageBox.Show("The last data values collected will be deleted.", 
+                "DELETE LAST DATA VALUES?", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+            if (result == MessageBoxResult.Yes)
+                sliderDataTable.Rows.RemoveAt(sliderDataTable.Rows.Count - 1);
+        }
+
+        private void OnDeleteAllClicked(object sender, RoutedEventArgs e)
+        {
+            if (sliderDataTable.Rows.Count == 0)
+            {
+                MessageBox.Show("The data table already is empty", "EMPTY TABLE", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var result = MessageBox.Show($"All {sliderDataTable.Rows.Count.ToString()} data values collected will be deleted.", 
+                $"DELETE {sliderDataTable.Rows.Count.ToString()} DATA VALUES?", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+            if (result == MessageBoxResult.Yes)
+                sliderDataTable.Rows.Clear();
+            
+        }
     }
 }
