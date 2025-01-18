@@ -10,8 +10,20 @@ The Tangible Slider Interface application allows for the evaluation and configur
    - On Linux/macOS: `/home/<YourUsername>`
 3. We recommend using a Folder to store the application as well as used questionnaire and conditions file (if needed).
 
+## Hardware Requirements
+This application was tested on an **Arduino Nano** as the controller and the following hardware components:
+
+| Component                  | Purpose                                       | Pin Assignment  |
+|----------------------------|-----------------------------------------------|-----------------|
+| **Button**                 | Detects user interactions                     | Digital Pin **2** |
+| **Vibrationmotor**| Activated when slider reaches threshold value | Digital Pin **3** |
+| **Sliding potentiometer**        | Reads current position                       | Analog Pin **A0** |
+| **Serial Connection**      | For communication with the application       | Baudrate: **9600** |
+
+Ensure all components are wired as described for proper functionality.
+
 ## CSV File Requirements
-The CSV file must meet the following specifications:
+The first line of the CSV file is reserved for column headings and will be skipped during processing. The file must meet the following specifications:
 - **Delimiter**: Semicolon (`;`)
 - **Number of Columns**: 6 fields per row
 
