@@ -10,38 +10,24 @@
         </ResourceDictionary>
     </Window.Resources>
 
-    <!-- Grid für flexibles Layout -->
     <Grid>
-        <!-- Grid mit zwei Zeilen: Inhalt oben, Buttons unten -->
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
-            <!-- Hauptinhalt dehnt sich aus -->
             <RowDefinition Height="Auto" />
-            <!-- Button-Bereich bleibt unten -->
         </Grid.RowDefinitions>
 
-        <!-- Inhalt (Titel, Beschreibung, Labels) -->
         <StackPanel Name="ContentPanel" Grid.Row="0" Margin="10">
-            <!-- Titel des Fragebogens -->
-            <TextBlock Name="TitleText" FontSize="20" FontWeight="Bold" TextAlignment="Center" Margin="0,0,0,10"/>
+            <TextBlock Name="TitleText" TextWrapping="Wrap" FontSize="20" FontWeight="Bold" TextAlignment="Center" Margin="0,0,0,10"/>
 
-            <!-- Beschreibung -->
-            <TextBlock Name="DescriptionText" FontSize="16" TextAlignment="Center" Margin="0,0,0,20"/>
+            <TextBlock Name="DescriptionText" TextWrapping="Wrap" FontSize="16" TextAlignment="Center" Margin="0,0,0,20"/>
 
-            <!-- Labels -->
             <Grid Margin="20">
-                <!-- Zwei Spalten: eine für das linke Label, eine für das rechte Label -->
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <!-- Linke Spalte -->
                     <ColumnDefinition Width="*" />
-                    <!-- Rechte Spalte -->
                 </Grid.ColumnDefinitions>
 
-                <!-- Linkes Label, linksbündig -->
                 <TextBlock Name="LeftLabel" FontSize="14" HorizontalAlignment="Left" TextAlignment="Right" Grid.Column="0" Margin="10,0,10,0" />
-
-                <!-- Rechtes Label, rechtsbündig -->
                 <TextBlock Name="RightLabel" FontSize="14" HorizontalAlignment="Right" TextAlignment="Left" Grid.Column="1" Margin="10,0,10,0" />
             </Grid>
         </StackPanel>

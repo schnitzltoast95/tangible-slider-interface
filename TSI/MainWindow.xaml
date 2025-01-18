@@ -21,7 +21,6 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Settings -->
         <Border Background="#FDF7F0" CornerRadius="20" Padding="10" Margin="0,0,20,0" Grid.Column="0" Grid.ColumnSpan="2">
             <StackPanel Width="270">
                 <TextBlock Text="SETTINGS" FontSize="21" FontWeight="Regular" Margin="10"/>
@@ -29,11 +28,9 @@
                 <StackPanel>
                     <TextBlock Text="Select COM Port:" Margin="10,0,0,0" FontSize="16" />
 
-                    <!-- ComboBox zur Auswahl des COM-Ports -->
                     <ComboBox Name="ComPortComboBox" Width="190" Height="30" Margin="0,5,0,20" DropDownOpened="ComPortComboBox_DropDownOpened" SelectionChanged="ComPortComboBox_SelectionChanged"/>
                 </StackPanel>
 
-                <!-- Set Questionnaire -->
                 <TextBlock Text="Set Questionnaire" Margin="10,20,0,0" FontSize="16"/>
                 <Button Content="Import Questionnaire" Width="190" Background="#F2E0C0" Foreground="#241A04" Margin="10" Click="ImportQuestionnaireButton_Click"/>
                 <StackPanel Orientation="Horizontal" Visibility="Collapsed" Name="Questionnaire_Name_Pannel">
@@ -49,7 +46,6 @@
                     </Border>
                 </StackPanel>
 
-                <!-- Select Condition -->
                 <TextBlock Text="Select Condition" Margin="10,20,0,0" FontSize="16"/>
                 <StackPanel>
                     <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="150">
@@ -62,7 +58,6 @@
                     </StackPanel>
                 </StackPanel>
 
-                <!-- Slider Control -->
                 <TextBlock Text="Slider Control" Margin="10,20,0,0" FontSize="16" Foreground="#7E7667"/>
 
 
@@ -97,7 +92,6 @@
             </StackPanel>
         </Border>
 
-        <!-- Rechter Bereich: Data Collection -->
         <Border Background="#FDF7F0" CornerRadius="20" Padding="10" Grid.Column="2">
             <Grid>
                 <Grid.RowDefinitions>
@@ -108,17 +102,14 @@
 
                 <TextBlock Text="DATA COLLECTION" FontSize="21" FontWeight="Regular" Margin="10" Grid.Row="0"/>
 
-                <!-- DataGrid für die Slider-Werte -->
                 <DataGrid Name="DataGridSliderValues" AutoGenerateColumns="False" Margin="10,20,10,0" Grid.Row="1" CanUserAddRows="False" HeadersVisibility="Column">
                     <DataGrid.Columns>
-                        <!-- Spalten mit fester Breite -->
                         <DataGridTextColumn Header="Questionnaire" Binding="{Binding Questionnaire}" />
                         <DataGridTextColumn Header="ParticipantID" Binding="{Binding ParticipantID}"/>
                         <DataGridTextColumn Header="Condition" Binding="{Binding Condition}" />
                         <DataGridTextColumn Header="Item" Binding="{Binding Item}" />
                         <DataGridTextColumn Header="Time Stamp" Binding="{Binding TimeStamp}" />
 
-                        <!-- Spalten mit dynamischer Verteilung -->
                         <DataGridTextColumn Header="Raw" Binding="{Binding Raw}" Width="1*" />
                         <DataGridTextColumn Header="Data" Binding="{Binding Data}" Width="1*" />
                         <DataGridTextColumn Header="Items" Binding="{Binding Items}" Width="1*" />
@@ -127,7 +118,6 @@
                     </DataGrid.Columns>
                 </DataGrid>
 
-                <!-- Buttons -->
                 <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
                     <Button Content="Delete Last" Width="105" Margin="10" Background="#AE4F4F" Foreground="White" Click="OnDeleteLastClicked"/>
                     <Button Content="Delete All" Width="105" Margin="10" Background="#AE4F4F" Foreground="White" Click="OnDeleteAllClicked"/>

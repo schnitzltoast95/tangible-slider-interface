@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Windows;
 using MsgBoxEx;
@@ -45,11 +46,10 @@ public class CsvParser
                     LabelLeft = string.IsNullOrWhiteSpace(values[2]) ? null : values[2],
                     LabelRight = string.IsNullOrWhiteSpace(values[3]) ? null : values[3],
                     ItemCount = int.TryParse(values[4], out int itemCount) ? itemCount : 0,
-                    Threshold = double.TryParse(values[5], out double threshold) ? threshold : 0.0
+                    Threshold = double.TryParse(values[5], NumberStyles.Any, CultureInfo.InvariantCulture, out double threshold) ? threshold : 0.0
                 };
                 
                 if (item.Threshold > 0.5) 
-                    // TODO: demote to warning
                     MessageBoxEx.Show(
                         "There are thresholds above 0,5 (50%) in your questionnaire. ", 
                         "THRESHOLDS BIGGER THAN 0,5", MessageBoxButton.OK, MessageBoxImage.Warning
