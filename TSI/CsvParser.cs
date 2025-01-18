@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
+using MsgBoxEx;
 
 public class QuestionnaireItem
 {
@@ -30,7 +31,7 @@ public class CsvParser
 
                 if (values.Length < 6)
                 {
-                    MessageBox.Show(
+                    MessageBoxEx.Show(
                         "Invalid CSV file, row has less than 6 fields.", 
                         "Error", MessageBoxButton.OK, MessageBoxImage.Error
                     );
@@ -49,7 +50,7 @@ public class CsvParser
                 
                 if (item.Threshold > 0.5) 
                     // TODO: demote to warning
-                    MessageBox.Show(
+                    MessageBoxEx.Show(
                         "There are thresholds above 0,5 (50%) in your questionnaire. ", 
                         "THRESHOLDS BIGGER THAN 0,5", MessageBoxButton.OK, MessageBoxImage.Warning
                     );

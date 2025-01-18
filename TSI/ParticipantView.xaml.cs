@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.IO.Ports;
 using System.Windows;
+using MsgBoxEx;
 
 namespace TSI
 {
@@ -9,6 +10,7 @@ namespace TSI
         private List<QuestionnaireItem> _items;
         private int _currentIndex = 0;
         public SerialPort _arduinoPort;
+        public QuestionnaireItem currentQuestionnaireItem;
         public event Action<double, double> OnItemSentToArduino;
 
         public ParticipantView(List<QuestionnaireItem> items, SerialPort arduinoPort)
@@ -38,6 +40,7 @@ namespace TSI
                 RightLabel.Visibility = string.IsNullOrWhiteSpace(item.LabelRight) ? Visibility.Hidden : Visibility.Visible;
 
                 SendItemToArduino(item);
+                currentQuestionnaireItem = item;
             }
 
         }
@@ -56,7 +59,7 @@ namespace TSI
             }
             else
             {
-                MessageBox.Show("Connection to Arduino not available.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBoxEx.Show("Connection to Arduino not available.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -69,7 +72,7 @@ namespace TSI
             }
             else
             {
-                MessageBox.Show("No more items left.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBoxEx.Show("No more items left.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
         
@@ -82,7 +85,7 @@ namespace TSI
             }
             else
             {
-                MessageBox.Show("You already at the first item.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBoxEx.Show("You already at the first item.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 

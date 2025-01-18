@@ -503,6 +503,7 @@ namespace MsgBoxEx
 					this.btnAbort.SetResourceReference (Control.TemplateProperty, ButtonTemplateName);
 					this.btnRetry.SetResourceReference (Control.TemplateProperty, ButtonTemplateName);
 					this.btnIgnore.SetResourceReference(Control.TemplateProperty, ButtonTemplateName);
+					this.btnTest.SetResourceReference(Control.TemplateProperty, ButtonTemplateName);
 				}
 			}
 		}
@@ -709,6 +710,13 @@ namespace MsgBoxEx
 		#region event handlers
 
 		#region buttons
+		
+		private void BtnTest_Click(object sender, RoutedEventArgs e)
+		{
+			this.MessageResult   = MessageBoxResult.OK;
+			this.MessageResultEx = MessageBoxResultEx.OK;
+			this.DialogResult    = true;
+		}
 
 		/// <summary>
 		/// Handle the click event for the OK button
@@ -905,6 +913,5 @@ namespace MsgBoxEx
 		}
 
 		#endregion event handlers
-
 	}
 }

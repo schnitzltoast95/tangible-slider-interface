@@ -18,29 +18,15 @@ namespace TSI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private List<string> conditions = new List<string>();
-        private List<QuestionnaireItem> importedItems = null;
-        private Color error = Color.FromArgb(186, 26, 26, 1);
-        private Color tertiary = Color.FromArgb(175, 207, 171, 1);
-        private DataTable sliderDataTable;
+        private List<string> _conditions = new List<string>();
+        private List<QuestionnaireItem> _importedItems;
+        private Color _error = Color.FromArgb(186, 26, 26, 1);
+        private Color _tertiary = Color.FromArgb(175, 207, 171, 1);
+        private DataTable _sliderDataTable;
         private SerialPort? _arduinoPort;
-        private double currentItemCount = -1.00;
-        private double currentThreshold = 0.00;
+        private double _currentItemCount = -1.00;
+        private double _currentThreshold = 0.00;
         private ParticipantView? _participantView;
-
-        public class DataRow
-        {
-            public string Questionnaire { get; set; }
-            public string ParticipantID { get; set; }
-            public string Condition { get; set; }
-            public DateTime TimeStamp { get; set; }
-            public int Raw { get; set; }
-            public double Data { get; set; }
-            public int Items { get; set; }
-            public double Threshold { get; set; }
-            public bool ShouldVibrate { get; set; }
-        }
-
 
         public MainWindow()
         {
@@ -56,7 +42,7 @@ namespace TSI
                 _arduinoPort.Close();
             }
             
-            var check = MessageBox.Show(
+            var check = MessageBoxEx.Show(
                 $"Do you want to export the collected data before closing the application?", 
                 "EXPORT DATA?", 
                 MessageBoxButton.YesNo, MessageBoxImage.Error
@@ -82,7 +68,7 @@ namespace TSI
             }
             else
             {
-                MessageBox.Show("No device available. Please connect a device.", "SLIDER NOT FOUND", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBoxEx.Show("No device available. Please connect a device.", "SLIDER NOT FOUND", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -94,7 +80,7 @@ namespace TSI
             if (ports.Length > 0)
                 ComPortComboBox.SelectedIndex = 0;
             else
-                MessageBox.Show("No device available. Please connect a device.", "SLIDER NOT FOUND", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBoxEx.Show("No device available. Please connect a device.", "SLIDER NOT FOUND", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
         private void ComPortComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -117,11 +103,10 @@ namespace TSI
                     _arduinoPort.Open();
                     if (_participantView != null) 
                         _participantView._arduinoPort = _arduinoPort;
-                    MessageBox.Show($"Connected to {selectedPort}", "Connection", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Could not connect to {selectedPort}. Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBoxEx.Show($"Could not connect to {selectedPort}. Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
@@ -159,19 +144,20 @@ namespace TSI
 
             if (int.TryParse(valueString, out int sliderValue))
             {
-                double scaledValue = sliderValue * (currentItemCount - 1) / 1024.0;
+                double scaledValue = sliderValue * (_currentItemCount - 1) / 1024.0;
 
-                IndicateVibration(scaledValue, currentThreshold);
+                IndicateVibration(scaledValue, _currentThreshold);
                 if (pressed)
                 {
                     string questionnaire = Questionnaire_Name.Text;
                     string participantID = ParticipantID.Text;
                     string condition = ConditionPanel.Children.OfType<RadioButton>().FirstOrDefault(rb => rb.IsChecked == true)?.Content?.ToString() ?? "no con";
-                    int items = (int)currentItemCount;
-                    double threshold = currentThreshold;
+                    string? item = _participantView == null ? "" : _participantView.currentQuestionnaireItem.Title;
+                    int items = (int)_currentItemCount;
+                    double threshold = _currentThreshold;
                     bool shouldVibrate = ShouldVibrate(scaledValue, threshold);
 
-                    sliderDataTable.Rows.Add(questionnaire, participantID, condition, DateTime.Now, sliderValue,
+                    _sliderDataTable.Rows.Add(questionnaire, participantID, condition, item, DateTime.Now, sliderValue,
                         scaledValue, items, threshold, shouldVibrate);
                     _participantView?.QuestionnaireForward();
                 }
@@ -185,26 +171,27 @@ namespace TSI
 
         private void InitializeDataTable()
         {
-            sliderDataTable = new DataTable();
+            _sliderDataTable = new DataTable();
 
-            sliderDataTable.Columns.Add("Questionnaire", typeof(string));
-            sliderDataTable.Columns.Add("ParticipantID", typeof(string));
-            sliderDataTable.Columns.Add("Condition", typeof(string));
-            sliderDataTable.Columns.Add("TimeStamp", typeof(DateTime));
-            sliderDataTable.Columns.Add("Raw", typeof(double));
-            sliderDataTable.Columns.Add("Data", typeof(double));
-            sliderDataTable.Columns.Add("Items", typeof(int));
-            sliderDataTable.Columns.Add("Threshold", typeof(double));
-            sliderDataTable.Columns.Add("ShouldVibrate", typeof(bool));
+            _sliderDataTable.Columns.Add("Questionnaire", typeof(string));
+            _sliderDataTable.Columns.Add("ParticipantID", typeof(string));
+            _sliderDataTable.Columns.Add("Condition", typeof(string));
+            _sliderDataTable.Columns.Add("Item", typeof(string));
+            _sliderDataTable.Columns.Add("TimeStamp", typeof(DateTime));
+            _sliderDataTable.Columns.Add("Raw", typeof(double));
+            _sliderDataTable.Columns.Add("Data", typeof(double));
+            _sliderDataTable.Columns.Add("Items", typeof(int));
+            _sliderDataTable.Columns.Add("Threshold", typeof(double));
+            _sliderDataTable.Columns.Add("ShouldVibrate", typeof(bool));
 
-            DataGridSliderValues.ItemsSource = sliderDataTable.DefaultView;
+            DataGridSliderValues.ItemsSource = _sliderDataTable.DefaultView;
         }
 
         private void InitParticipantView()
         {
-            if (importedItems == null || importedItems.Count == 0)
+            if (_importedItems == null || _importedItems.Count == 0)
             {
-                MessageBox.Show("Please import a questionnaire CSV file before starting.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBoxEx.Show("Please import a questionnaire CSV file before starting.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             
@@ -217,9 +204,15 @@ namespace TSI
                 _participantView = null;
             }
 
-            _participantView = new ParticipantView(importedItems, _arduinoPort);
-            _participantView.OnItemSentToArduino += UpdateSliderValues;
-            _participantView.Show();
+            if (_arduinoPort == null) 
+                MessageBoxEx.Show("Please connect a device.", "NO DEVICE", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            else
+            {
+                _participantView = new ParticipantView(_importedItems, _arduinoPort);
+                _participantView.OnItemSentToArduino += UpdateSliderValues;
+                _participantView.Show();
+            }
         }
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
@@ -237,22 +230,21 @@ namespace TSI
             if (openFileDialog.ShowDialog() == true)
             {
                 string filePath = openFileDialog.FileName;
-                importedItems = CsvParser.ParseCsv(filePath);
+                _importedItems = CsvParser.ParseCsv(filePath);
 
-                if (importedItems == null || importedItems.Count == 0)
+                if (_importedItems == null || _importedItems.Count == 0)
                 {
-                    MessageBox.Show("Could not load the CSV file or it does not contain valid data.", "Error",
+                    MessageBoxEx.Show("Could not load the CSV file or it does not contain valid data.", "Error",
                         MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 else
                 {
-                    MessageBox.Show("CSV file was successfully imported.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                     Questionnaire_Name.Text = System.IO.Path.GetFileName(filePath);
                     Questionnaire_Name_Pannel.Visibility = Visibility.Visible;
-                    currentItemCount = !string.IsNullOrWhiteSpace(importedItems[0].ItemCount.ToString()) ? importedItems[0].ItemCount : -1;
-                    Items_Value.Text = currentItemCount.ToString();
-                    currentThreshold = !string.IsNullOrWhiteSpace(importedItems[0].Threshold.ToString()) ? importedItems[0].Threshold : -1;
-                    Threshold_Value.Text = currentThreshold.ToString();
+                    _currentItemCount = !string.IsNullOrWhiteSpace(_importedItems[0].ItemCount.ToString()) ? _importedItems[0].ItemCount : -1;
+                    Items_Value.Text = _currentItemCount.ToString();
+                    _currentThreshold = !string.IsNullOrWhiteSpace(_importedItems[0].Threshold.ToString()) ? _importedItems[0].Threshold : -1;
+                    Threshold_Value.Text = _currentThreshold.ToString();
                     UpdateZonesOnThresholdChange();
                     InitParticipantView();
                 }
@@ -262,15 +254,15 @@ namespace TSI
         private void SetupConditionsButton_Click(object sender, RoutedEventArgs e)
         {
             ConditionSetupWindow setupWindow = new ConditionSetupWindow();
-            setupWindow.SetConditions(new List<string>(conditions));
+            setupWindow.SetConditions(new List<string>(_conditions));
             Overlay.Visibility = Visibility.Visible;
 
             setupWindow.Owner = this;
 
             if (setupWindow.ShowDialog() == true)
             {
-                conditions = new List<string>(setupWindow.Conditions);
-                conditions = conditions.Where(c => !string.IsNullOrWhiteSpace(c)).Distinct().ToList();
+                _conditions = new List<string>(setupWindow.Conditions);
+                _conditions = _conditions.Where(c => !string.IsNullOrWhiteSpace(c)).Distinct().ToList();
 
                 UpdateConditionDisplay();
             }
@@ -281,9 +273,9 @@ namespace TSI
         private void UpdateConditionDisplay()
         {
             ConditionPanel.Children.Clear();
-            ConditionPanel.Visibility = conditions.Any() ? Visibility.Visible : Visibility.Collapsed;
+            ConditionPanel.Visibility = _conditions.Any() ? Visibility.Visible : Visibility.Collapsed;
 
-            foreach (var condition in conditions)
+            foreach (var condition in _conditions)
             {
                 if (!string.IsNullOrWhiteSpace(condition))
                 {
@@ -316,13 +308,13 @@ namespace TSI
                     try
                     {
                         string json = File.ReadAllText(filePath);
-                        conditions = System.Text.Json.JsonSerializer.Deserialize<List<string>>(json) ?? new List<string>();
+                        _conditions = System.Text.Json.JsonSerializer.Deserialize<List<string>>(json) ?? new List<string>();
 
                         UpdateConditionDisplay();
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Failed to load conditions: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBoxEx.Show($"Failed to load conditions: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
             }
@@ -350,12 +342,12 @@ namespace TSI
                     StringBuilder sb = new StringBuilder();
 
                     // Get column names and append to the StringBuilder
-                    IEnumerable<string> columnNames = sliderDataTable.Columns.Cast<DataColumn>()
+                    IEnumerable<string> columnNames = _sliderDataTable.Columns.Cast<DataColumn>()
                         .Select(column => column.ColumnName);
                     sb.AppendLine(string.Join(",", columnNames));
 
                     // Iterate through rows and append each row's data
-                    foreach (System.Data.DataRow row in sliderDataTable.Rows)
+                    foreach (System.Data.DataRow row in _sliderDataTable.Rows)
                     {
                         IEnumerable<string> fields = row.ItemArray.Select(field => field.ToString());
                         sb.AppendLine(string.Join(",", fields));
@@ -380,9 +372,9 @@ namespace TSI
         private void UpdateSliderValues(double items, double threshold)
         {
             Items_Value.Text = items.ToString();
-            currentItemCount = items;
+            _currentItemCount = items;
             Threshold_Value.Text = threshold.ToString("F2");
-            currentThreshold = threshold;
+            _currentThreshold = threshold;
         }
 
         private void IndicateVibration(double rawValue, double threshold)
@@ -408,8 +400,8 @@ namespace TSI
         {
             if (Slider_Visualizer.Template != null)
             {
-                int items = (int)currentItemCount;
-                double threshold = currentThreshold;
+                int items = (int)_currentItemCount;
+                double threshold = _currentThreshold;
 
                 Canvas zonesCanvas = (Canvas)Slider_Visualizer.Template.FindName("ZonesCanvas", Slider_Visualizer);
                 if (zonesCanvas != null)
@@ -465,35 +457,35 @@ namespace TSI
 
         private void OnDeleteLastClicked(object sender, RoutedEventArgs e)
         {
-            if (sliderDataTable == null || sliderDataTable.Rows.Count == 0)
+            if (_sliderDataTable == null || _sliderDataTable.Rows.Count == 0)
             {
                 throw new InvalidOperationException("Table is empty. No last row to delete.");
             }
             
             var result = MessageBoxEx.Show("The last data values collected will be deleted.", 
-                "DELETE LAST DATA VALUES" , "Delete" , "Cancel", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                "DELETE LAST DATA VALUES", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
 
-            if (result == MessageBoxResult.Yes)
+            if (result == MessageBoxResult.OK)
             {
-                sliderDataTable.Rows.RemoveAt(sliderDataTable.Rows.Count - 1);
+                _sliderDataTable.Rows.RemoveAt(_sliderDataTable.Rows.Count - 1);
                 _participantView?.QuestionnaireBackward();
             }
         }
 
         private void OnDeleteAllClicked(object sender, RoutedEventArgs e)
         {
-            if (sliderDataTable.Rows.Count == 0)
+            if (_sliderDataTable.Rows.Count == 0)
             {
-                MessageBox.Show("The data table already is empty", "EMPTY TABLE", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBoxEx.Show("The data table already is empty", "EMPTY TABLE", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            var result = MessageBox.Show($"All {sliderDataTable.Rows.Count.ToString()} data values collected will be deleted.", 
-                $"DELETE {sliderDataTable.Rows.Count.ToString()} DATA VALUES?", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            var result = MessageBoxEx.Show($"All {_sliderDataTable.Rows.Count.ToString()} data values collected will be deleted.", 
+                $"DELETE {_sliderDataTable.Rows.Count.ToString()} DATA VALUES?", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
 
             if (result == MessageBoxResult.Yes)
             {
-                sliderDataTable.Rows.Clear();
+                _sliderDataTable.Rows.Clear();
                 InitParticipantView();
             }
 

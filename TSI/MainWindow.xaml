@@ -115,6 +115,7 @@
                         <DataGridTextColumn Header="Questionnaire" Binding="{Binding Questionnaire}" />
                         <DataGridTextColumn Header="ParticipantID" Binding="{Binding ParticipantID}"/>
                         <DataGridTextColumn Header="Condition" Binding="{Binding Condition}" />
+                        <DataGridTextColumn Header="Item" Binding="{Binding Item}" />
                         <DataGridTextColumn Header="Time Stamp" Binding="{Binding TimeStamp}" />
 
                         <!-- Spalten mit dynamischer Verteilung -->

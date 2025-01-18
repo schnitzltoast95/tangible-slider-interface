@@ -11,21 +11,21 @@ namespace MsgBoxEx
 	/// <summary>
 	/// Message box button groups for MessageBoxEx
 	/// </summary>
-	public enum MessageBoxButtonEx { OK=0, OKCancel, AbortRetryIgnore, YesNoCancel, YesNo, RetryCancel }
+	public enum MessageBoxButtonEx { OK=0, OKCancel, AbortRetryIgnore, YesNoCancel, YesNo, RetryCancel, Test }
 
 	// the wpf message box does not use the DialogResult enum for return values. At the same time, they 
 	// don't include these values in the MessageBoxResult enum.  - WTF microsoft!?
 	/// <summary>
 	/// Message box result for MessageBoxEx
 	/// </summary>
-	public enum MessageBoxResultEx { None=0, OK, Cancel, Abort, Retry, Ignore, Yes, No }
+	public enum MessageBoxResultEx { None=0, OK, Cancel, Abort, Retry, Ignore, Yes, No, Test }
 
 	/// <summary>
 	/// Default button for MessageBoxEx
 	/// </summary> 
 	public enum MessageBoxButtonDefault 
 	{ 
-		OK, Cancel, Yes, No, Abort, Retry, Ignore, // specific button
+		OK, Cancel, Yes, No, Abort, Retry, Ignore, Test,  // specific button
 		Button1, Button2, Button3,                 // button by ordinal left-to-right position
 		MostPositive, LeastPositive,               // button by positivity
 		Forms,                                     // button according to the Windows.Forms standard messagebox
