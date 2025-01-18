@@ -37,11 +37,6 @@ namespace TSI
 
        private void MainWindow_Closed(object sender, EventArgs e) 
         {
-            if (_arduinoPort != null && _arduinoPort.IsOpen)
-            {
-                _arduinoPort.Close();
-            }
-            
             var check = MessageBoxEx.Show(
                 $"Do you want to export the collected data before closing the application?", 
                 "EXPORT DATA?", 
