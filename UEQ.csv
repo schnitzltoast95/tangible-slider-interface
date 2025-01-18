@@ -1,0 +1,28 @@
+Title;Description;LabelLeft;LabelRight;ItemCount;Threshold
+Please make your evaluation now.;For the assessment of the product, please fill out the following questionnaire. The questionnaire consists of pairs of contrasting attributes that may apply to the product. The circles between the attributes represent gradations between the opposites. You can express your agreement with the attributes by ticking the circle that most closely reflects your impression.;;;;
+annoying vs enjoyable;;annoying;enjoyable;7;0.15
+not understandable vs understandable;;not understandable;understandable;7;0.15
+creative vs dull;;creative;dull;7;0.15
+easy to learn vs difficult to learn;;easy to learn;difficult to learn;7;0.15
+valuable vs inferior;;valuable;inferior;7;0.15
+boring vs exciting;;boring;exciting;7;0.15
+not interesting vs interesting;;not interesting;interesting;7;0.15
+unpredictable vs predictable;;unpredictable;predictable;7;0.15
+fast vs slow;;fast;slow;7;0.15
+inventive vs conventional;;inventive;conventional;7;0.15
+obstructive vs supportive;;obstructive;supportive;7;0.15
+good vs bad;;good;bad;7;0.15
+complicated vs easy;;complicated;easy;7;0.15
+unlikable vs pleasing;;unlikable;pleasing;7;0.15
+usual vs leading edge;;usual;leading edge;7;0.15
+unpleasant vs pleasant;;unpleasant;pleasant;7;0.15
+secure vs not secure;;secure;not secure;7;0.15
+motivating vs demotivating;;motivating;demotivating;7;0.15
+meets expectations vs does not meet expectations;;meets expectations;does not meet expectations;7;0.15
+inefficient vs efficient;;inefficient;efficient;7;0.15
+clear vs confusing;;clear;confusing;7;0.15
+impractical vs practical;;impractical;practical;7;0.15
+organized vs cluttered;;organized;cluttered;7;0.15
+attractive vs unattractive;;attractive;unattractive;7;0.15
+friendly vs unfriendly;;friendly;unfriendly;7;0.15
+conservative vs innovative;;conservative;innovative;7;0.15

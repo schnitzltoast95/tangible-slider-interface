@@ -12,16 +12,11 @@
 
     <Border Background="#FFF5E5" CornerRadius="20" Padding="20">
         <StackPanel>
-            <!-- Titel -->
             <TextBlock Text="Setup Condition" FontSize="20" FontWeight="Bold" Margin="0,0,0,20" HorizontalAlignment="Center"/>
 
-            <!-- Verschachtelte StackPanels für Conditions und Plus-Button -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <!-- Linkes StackPanel: Enthält die Conditions -->
                 <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="150">
-                    <!-- Scrollbarer Bereich für die Conditions -->
                     <StackPanel Name="ConditionPanel" Orientation="Vertical">
-                        <!-- Hier werden die dynamischen Conditions eingefügt -->
                     </StackPanel>
                 </ScrollViewer>
 
@@ -33,7 +28,6 @@
                 </Button.Content>
             </Button>
 
-            <!-- Save Button -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Content="Save" Width="150" Height="40" Background="#EAAE05" Foreground="White" HorizontalAlignment="Center" Margin="20,10,0,0" Click="SaveButton_Click"/>
                 <Button Content="Export Conditions" Width="150" Height="40" Background="#F2E0C0" Foreground="Black" HorizontalAlignment="Center" Margin="20,10,0,0" Click="ExportConditionClick"/>
