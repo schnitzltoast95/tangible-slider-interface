@@ -45,15 +45,5 @@
                 <TextBlock Name="RightLabel" FontSize="14" HorizontalAlignment="Right" TextAlignment="Left" Grid.Column="1" Margin="10,0,10,0" />
             </Grid>
         </StackPanel>
-
-        <!-- Button Bereich -->
-        <Border Background="#FDF7F0" Padding="10" HorizontalAlignment="Stretch" Grid.Row="1">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="20,0,20,20">
-                <Button Name="ContinueButton" Content="Continue" Width="100" Height="40" Background="#EAAE05" Foreground="White" Margin="10" Click="ContinueButton_Click"/>
-                <Button Name="FinishButton" Content="Finish" Width="100" Height="40" Background="#EAAE05" Foreground="White" Margin="10" Click="FinishButton_Click"/>
-                <!-- DEBUG_CONTINUE Button für die Navigation zur nächsten Zeile im CSV -->
-                <Button Content="DEBUG_CONTINUE" Width="120" Height="40" Background="#AE4F4F" Foreground="White" Margin="10" Click="DebugContinueButton_Click"/>
-            </StackPanel>
-        </Border>
     </Grid>
 </Window>

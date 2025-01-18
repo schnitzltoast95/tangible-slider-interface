@@ -56,7 +56,10 @@
                         <StackPanel Name="ConditionPanel" Orientation="Vertical" HorizontalAlignment="Left" Margin="10, 5, 0, 0" >
                         </StackPanel>
                     </ScrollViewer>
-                    <Button Content="Setup Conditions" Width="190" Height="40" Background="#F2E0C0" Margin="5" Click="SetupConditionsButton_Click"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Content="Setup" Width="120" Height="40" Background="#F2E0C0" Margin="5" Click="SetupConditionsButton_Click"/>
+                        <Button Content="Import" Width="120" Height="40" Background="#F2E0C0" Margin="5" Click="LoadConditions"/>
+                    </StackPanel>
                 </StackPanel>
 
                 <!-- Slider Control -->
@@ -125,9 +128,9 @@
 
                 <!-- Buttons -->
                 <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-                    <Button Content="Delete Last" Width="105" Margin="10" Background="#AE4F4F" Foreground="White"/>
-                    <Button Content="Delete All" Width="105" Margin="10" Background="#AE4F4F" Foreground="White"/>
-                    <Button Content="Export Data" Width="105" Margin="10" Background="#EAAE05" Foreground="White" Click="OnExportDataClick"/>
+                    <Button Content="Delete Last" Width="105" Margin="10" Background="#AE4F4F" Foreground="White" Click="OnDeleteLastClicked"/>
+                    <Button Content="Delete All" Width="105" Margin="10" Background="#AE4F4F" Foreground="White" Click="OnDeleteAllClicked"/>
+                    <Button Content="Export Data" Width="105" Margin="10" Background="#EAAE05" Foreground="White" Click="ExportDataTable"/>
                 </StackPanel>
             </Grid>
         </Border>

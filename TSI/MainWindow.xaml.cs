@@ -1,7 +1,7 @@
 ﻿using System.Data;
+using System.Globalization;
 using System.IO;
 using System.IO.Ports;
-using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,6 +9,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Microsoft.Win32;
+using MsgBoxEx;
 
 namespace TSI
 {
@@ -62,8 +63,7 @@ namespace TSI
             );
             
             if (check == MessageBoxResult.Yes)
-                // SaveConditions();
-                SaveData();
+                SaveDataTable();
         }
 
 
@@ -292,82 +292,79 @@ namespace TSI
             }
         }
 
-        private void SaveConditions()
+        private void LoadConditions(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog
+            var openFileDialog = new Microsoft.Win32.OpenFileDialog
             {
-                Title = "Select a File",
-                Filter = "Json Files (*.json)|*.txt|All Files (*.*)|*.*",
-                InitialDirectory = @"C:\", // Optional: Set the initial directory
-                FileName = "conditions.json"
+                Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*",
+                InitialDirectory = AppDomain.CurrentDomain.BaseDirectory,
+                Title = "Select a Conditions File"
             };
 
-            if (saveFileDialog.ShowDialog() == true) // ShowDialog() returns a nullable bool
+            if (openFileDialog.ShowDialog() == true)
             {
-                string filePath = saveFileDialog.FileName;
-                try
+                string filePath = openFileDialog.FileName;
+
+                if (File.Exists(filePath))
                 {
-                    string json = System.Text.Json.JsonSerializer.Serialize(conditions);
-                    File.WriteAllText(filePath, json);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Failed to save conditions: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    try
+                    {
+                        string json = File.ReadAllText(filePath);
+                        conditions = System.Text.Json.JsonSerializer.Deserialize<List<string>>(json) ?? new List<string>();
+
+                        UpdateConditionDisplay();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Failed to load conditions: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
         }
         
-        private void SaveData()
+        private void SaveDataTable()
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
-                Title = "Select a Destination",
+                Title = "Save CSV File",
                 Filter = "CSV Files (*.csv)|*.csv|All Files (*.*)|*.*",
-                InitialDirectory = @AppDomain.CurrentDomain.BaseDirectory, // Optional: Set the initial directory
-                FileName = string.IsNullOrEmpty(ParticipantID.Text) ? "sliderData.csv" : $"{ParticipantID.Text}.csv"
+                InitialDirectory = AppDomain.CurrentDomain.BaseDirectory,
+                FileName = string.IsNullOrWhiteSpace(ParticipantID.Text) ? "sliderData.csv" : $"{ParticipantID.Text}.csv"
             };
 
-            if (saveFileDialog.ShowDialog() == true) // ShowDialog() returns a nullable bool
+            if (saveFileDialog.ShowDialog() == true)
             {
                 string filePath = saveFileDialog.FileName;
+
+                var originalCulture = Thread.CurrentThread.CurrentCulture;
+                Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
                 try
                 {
                     StringBuilder sb = new StringBuilder();
+
+                    // Get column names and append to the StringBuilder
                     IEnumerable<string> columnNames = sliderDataTable.Columns.Cast<DataColumn>()
                         .Select(column => column.ColumnName);
                     sb.AppendLine(string.Join(",", columnNames));
 
+                    // Iterate through rows and append each row's data
                     foreach (System.Data.DataRow row in sliderDataTable.Rows)
                     {
-                        IEnumerable<string?> fields = row.ItemArray.Select(field =>
-                            field == null ? string.Empty : field.ToString()); // Handle null values
+                        IEnumerable<string> fields = row.ItemArray.Select(field => field.ToString());
                         sb.AppendLine(string.Join(",", fields));
                     }
+
+                    // Write the content to the selected file
                     File.WriteAllText(filePath, sb.ToString());
-                    MessageBox.Show("Data saved successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Failed to save data: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    throw new IOException($"Failed to save data to {filePath}.", ex);
                 }
-            }
-        }
-
-
-        private void LoadConditions()
-        {
-            string filePath = "conditions.json";
-            if (File.Exists(filePath))
-            {
-                try
+                finally
                 {
-                    string json = File.ReadAllText(filePath);
-                    conditions = System.Text.Json.JsonSerializer.Deserialize<List<string>>(json) ?? new List<string>();
-                    UpdateConditionDisplay();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Failed to load conditions: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Thread.CurrentThread.CurrentCulture = originalCulture;
                 }
             }
         }
@@ -458,7 +455,36 @@ namespace TSI
             }
         }
 
-        private void OnExportDataClick(object sender, RoutedEventArgs e) => SaveData();
-        
+        private void ExportDataTable(object sender, RoutedEventArgs e) => SaveDataTable();
+
+        private void OnDeleteLastClicked(object sender, RoutedEventArgs e)
+        {
+            if (sliderDataTable == null || sliderDataTable.Rows.Count == 0)
+            {
+                throw new InvalidOperationException("Table is empty. No last row to delete.");
+            }
+            
+            var result = MessageBoxEx.Show("The last data values collected will be deleted.", 
+                "DELETE LAST DATA VALUES" , "Delete" , "Cancel", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+            if (result == MessageBoxResult.Yes)
+                sliderDataTable.Rows.RemoveAt(sliderDataTable.Rows.Count - 1);
+        }
+
+        private void OnDeleteAllClicked(object sender, RoutedEventArgs e)
+        {
+            if (sliderDataTable.Rows.Count == 0)
+            {
+                MessageBox.Show("The data table already is empty", "EMPTY TABLE", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var result = MessageBox.Show($"All {sliderDataTable.Rows.Count.ToString()} data values collected will be deleted.", 
+                $"DELETE {sliderDataTable.Rows.Count.ToString()} DATA VALUES?", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+            if (result == MessageBoxResult.Yes)
+                sliderDataTable.Rows.Clear();
+            
+        }
     }
 }
