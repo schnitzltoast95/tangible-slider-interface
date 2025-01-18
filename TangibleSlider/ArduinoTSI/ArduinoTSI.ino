@@ -9,6 +9,8 @@ double value = 0;
 int lastState = LOW;
 int currentState;
 const char* delimiter = ":";
+unsigned long previousMillis;
+const long intervall = 20;
 
 double lastPosition = -1;
 
@@ -36,9 +38,8 @@ void loop() {
     // between 0 and 1023
     int sensorValue = analogRead(A0);
 
-    // Print sensor value if it has changed significantly
-    if (abs(sensorValue - lastPosition) >= 16)
-    {
+    if (millis() - previousMillis >= intervall && abs(sensorValue - lastPosition) >= 5) {
+        previousMillis = millis();
         Serial.println(sensorValue);
         lastPosition = sensorValue;
     }
