@@ -1,7 +1,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- Global Button-Style -->
+    <!-- Button-Style -->
     <Style TargetType="Button">
         <Setter Property="Template">
             <Setter.Value>
@@ -23,7 +23,7 @@
         <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
 
-    <!-- Style für die RadioButtons -->
+    <!-- RadioButtons -->
     <Style TargetType="RadioButton">
         <Setter Property="Template">
             <Setter.Value>
@@ -51,15 +51,15 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Slider">
                     <Grid>
-                        <!-- Slider-Hintergrund -->
+                        <!-- Background -->
                         <Border Background="#D0C5B4" Height="6" CornerRadius="3" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
 
-                        <!-- Vibrationszonen zwischen Hintergrund und Thumb -->
+                        <!-- Vibration zones -->
                         <Canvas Name="ZonesCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="6">
-                            <!-- Dynamische Zonen -->
+                            <!-- dynamic Zones -->
                         </Canvas>
 
-                        <!-- Der eigentliche Track des Sliders -->
+                        <!-- Track -->
                         <Track Name="PART_Track" VerticalAlignment="Center">
                             <Track.Thumb>
                                 <Thumb Width="20" Height="20">
@@ -190,9 +190,8 @@
     </Style>
 
  
-        <!-- Stil für DataGrid -->
+        <!-- DataGrid -->
         <Style TargetType="DataGrid">
-            <!-- Allgemeine Eigenschaften -->
             <Setter Property="FontFamily" Value="Roboto" />
             <Setter Property="FontSize" Value="12" />
             <Setter Property="Background" Value="#FDF7F0" />
@@ -205,7 +204,6 @@
             <Setter Property="BorderThickness" Value="0" />
 
 
-            <!-- Kopfzeilen-Stil -->
             <Setter Property="ColumnHeaderStyle">
                 <Setter.Value>
                     <Style TargetType="DataGridColumnHeader">
@@ -220,7 +218,6 @@
                 </Setter.Value>
             </Setter>
 
-            <!-- Zellen-Stil -->
             <Setter Property="CellStyle">
                 <Setter.Value>
                     <Style TargetType="DataGridCell">

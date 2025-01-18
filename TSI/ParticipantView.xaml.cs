@@ -7,18 +7,19 @@ namespace TSI
 {
     public partial class ParticipantView : Window
     {
-        private List<QuestionnaireItem> _items;
-        private int _currentIndex = 0;
-        public SerialPort _arduinoPort;
-        public QuestionnaireItem currentQuestionnaireItem;
+        private readonly List<QuestionnaireItem> _items;
+        private int _currentIndex;
+        public SerialPort ArduinoPort;
+        public QuestionnaireItem CurrentQuestionnaireItem;
         public event Action<double, double> OnItemSentToArduino;
 
         public ParticipantView(List<QuestionnaireItem> items, SerialPort arduinoPort)
         {
             InitializeComponent();
             _items = items;
-            _arduinoPort = arduinoPort;
+            ArduinoPort = arduinoPort;
             LoadQuestionnaireItem(_currentIndex);
+            _currentIndex++;
         }
 
         private void LoadQuestionnaireItem(int index)
@@ -40,21 +41,21 @@ namespace TSI
                 RightLabel.Visibility = string.IsNullOrWhiteSpace(item.LabelRight) ? Visibility.Hidden : Visibility.Visible;
 
                 SendItemToArduino(item);
-                currentQuestionnaireItem = item;
+                CurrentQuestionnaireItem = item;
             }
 
         }
 
         private void SendItemToArduino(QuestionnaireItem item)
         {
-            if (_arduinoPort != null && _arduinoPort.IsOpen)
+            if (ArduinoPort != null && ArduinoPort.IsOpen)
             {
                 var thresh = item.Threshold.ToString(CultureInfo.InvariantCulture);
                 string message = $"{item.ItemCount}:{thresh}";
                 if (message.Length > 29)
                     throw new ArgumentException("message too long for arduino! max 29 characters, but got " +
                                                 message.Length);
-                _arduinoPort.WriteLine(message);
+                ArduinoPort.WriteLine(message);
                 OnItemSentToArduino?.Invoke(item.ItemCount, item.Threshold);
             }
             else

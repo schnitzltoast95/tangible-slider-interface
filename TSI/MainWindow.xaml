@@ -5,7 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Researcher View" Height="870" Width="940">
+        Title="Researcher View" Height="870" Width="950">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -28,7 +28,7 @@
                 <StackPanel>
                     <TextBlock Text="Select COM Port:" Margin="10,0,0,0" FontSize="16" />
 
-                    <ComboBox Name="ComPortComboBox" Width="190" Height="30" Margin="0,5,0,20" DropDownOpened="ComPortComboBox_DropDownOpened" SelectionChanged="ComPortComboBox_SelectionChanged"/>
+                    <ComboBox Name="ComPortComboBox" VerticalAlignment="Center" HorizontalAlignment="Stretch" Width="190" Height="30" Margin="0,5,0,20" DropDownOpened="ComPortComboBox_DropDownOpened" SelectionChanged="ComPortComboBox_SelectionChanged"/>
                 </StackPanel>
 
                 <TextBlock Text="Set Questionnaire" Margin="10,20,0,0" FontSize="16"/>
@@ -42,7 +42,7 @@
                 <StackPanel Orientation="Horizontal" Margin="0, 10, 0, 0">
                     <TextBlock Text="Participant ID" Margin="10,5,10,5" FontSize="12"/>
                     <Border BorderBrush="#D0C5B4" BorderThickness="0.5" CornerRadius="5">
-                        <TextBox Height="30" Width="121" Name="ParticipantID"></TextBox>
+                        <TextBox Height="Auto" Width="121" VerticalAlignment="Center" Padding="4" Name="ParticipantId"></TextBox>
                     </Border>
                 </StackPanel>
 

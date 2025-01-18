@@ -102,7 +102,7 @@ namespace TSI
                 {
                     _arduinoPort.Open();
                     if (_participantView != null) 
-                        _participantView._arduinoPort = _arduinoPort;
+                        _participantView.ArduinoPort = _arduinoPort;
                 }
                 catch (Exception ex)
                 {
@@ -150,9 +150,9 @@ namespace TSI
                 if (pressed)
                 {
                     string questionnaire = Questionnaire_Name.Text;
-                    string participantID = ParticipantID.Text;
+                    string participantID = ParticipantId.Text;
                     string condition = ConditionPanel.Children.OfType<RadioButton>().FirstOrDefault(rb => rb.IsChecked == true)?.Content?.ToString() ?? "no con";
-                    string? item = _participantView == null ? "" : _participantView.currentQuestionnaireItem.Title;
+                    string? item = _participantView == null ? "" : _participantView.CurrentQuestionnaireItem.Title;
                     int items = (int)_currentItemCount;
                     double threshold = _currentThreshold;
                     bool shouldVibrate = ShouldVibrate(scaledValue, threshold);
@@ -327,7 +327,7 @@ namespace TSI
                 Title = "Save CSV File",
                 Filter = "CSV Files (*.csv)|*.csv|All Files (*.*)|*.*",
                 InitialDirectory = AppDomain.CurrentDomain.BaseDirectory,
-                FileName = string.IsNullOrWhiteSpace(ParticipantID.Text) ? "sliderData.csv" : $"{ParticipantID.Text}.csv"
+                FileName = string.IsNullOrWhiteSpace(ParticipantId.Text) ? "sliderData.csv" : $"{ParticipantId.Text}.csv"
             };
 
             if (saveFileDialog.ShowDialog() == true)
@@ -459,7 +459,8 @@ namespace TSI
         {
             if (_sliderDataTable == null || _sliderDataTable.Rows.Count == 0)
             {
-                throw new InvalidOperationException("Table is empty. No last row to delete.");
+                MessageBoxEx.Show("The data table already is empty", "EMPTY TABLE", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
             
             var result = MessageBoxEx.Show("The last data values collected will be deleted.", 
@@ -483,7 +484,7 @@ namespace TSI
             var result = MessageBoxEx.Show($"All {_sliderDataTable.Rows.Count.ToString()} data values collected will be deleted.", 
                 $"DELETE {_sliderDataTable.Rows.Count.ToString()} DATA VALUES?", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
 
-            if (result == MessageBoxResult.Yes)
+            if (result == MessageBoxResult.OK)
             {
                 _sliderDataTable.Rows.Clear();
                 InitParticipantView();
