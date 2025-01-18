@@ -69,8 +69,22 @@ namespace TSI
             }
             else
             {
-                MessageBox.Show("Keine weiteren Items vorhanden.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("No more items left.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
+        
+        public void QuestionnaireBackward()
+        {
+            if (_currentIndex > 0)
+            {
+                _currentIndex--;
+                LoadQuestionnaireItem(_currentIndex);
+            }
+            else
+            {
+                MessageBox.Show("You already at the first item.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
     }
 }

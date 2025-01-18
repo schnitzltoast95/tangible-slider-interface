@@ -27,7 +27,11 @@
 
             </StackPanel>
             
-            <Button Content="+" Width="30" Height="30" Background="#EAAE05" Foreground="White" Click="AddConditionButton_Click" />
+            <Button Width="30" Height="30" Background="#EAAE05" Click="AddConditionButton_Click">
+                <Button.Content>
+                    <Image Source="Assets/add.png" Width="20" Height="20"/>
+                </Button.Content>
+            </Button>
 
             <!-- Save Button -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">

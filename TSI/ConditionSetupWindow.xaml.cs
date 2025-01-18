@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 
 namespace TSI
@@ -95,7 +96,6 @@ namespace TSI
             
             Button deleteButton = new Button
             {
-                Content = "🗑",
                 Width = 30,
                 Height = 30,
                 Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#AE4F4F")),
@@ -103,6 +103,14 @@ namespace TSI
                 Margin = new Thickness(10, 0, 0, 0)
             };
             
+            Image image = new Image
+            {
+                Source = new BitmapImage(new Uri("TSI/Assets/trash.png", UriKind.Relative)),
+                Width = 20,
+                Height = 20
+            };
+            
+            deleteButton.Content = image;
             deleteButton.Tag = newConditionPanel;
             deleteButton.Click += OnDeleteConditionClicked;
 

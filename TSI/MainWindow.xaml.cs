@@ -26,7 +26,7 @@ namespace TSI
         private SerialPort? _arduinoPort;
         private double currentItemCount = -1.00;
         private double currentThreshold = 0.00;
-        private ParticipantView _participantView;
+        private ParticipantView? _participantView;
 
         public class DataRow
         {
@@ -82,7 +82,7 @@ namespace TSI
             }
             else
             {
-                MessageBox.Show("Kein COM-Port verfügbar. Bitte ein Gerät anschließen.", "Warnung", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("No device available. Please connect a device.", "SLIDER NOT FOUND", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -92,13 +92,9 @@ namespace TSI
             string[] ports = SerialPort.GetPortNames();
             ComPortComboBox.ItemsSource = ports;
             if (ports.Length > 0)
-            {
                 ComPortComboBox.SelectedIndex = 0;
-            }
             else
-            {
-                MessageBox.Show("No COM ports available. Please connect a device.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
+                MessageBox.Show("No device available. Please connect a device.", "SLIDER NOT FOUND", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
         private void ComPortComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -211,6 +207,15 @@ namespace TSI
                 MessageBox.Show("Please import a questionnaire CSV file before starting.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
+            
+            if (_participantView != null)
+            {
+                if (_participantView.IsVisible)
+                {
+                    _participantView.Close();
+                }
+                _participantView = null;
+            }
 
             _participantView = new ParticipantView(importedItems, _arduinoPort);
             _participantView.OnItemSentToArduino += UpdateSliderValues;
@@ -236,11 +241,12 @@ namespace TSI
 
                 if (importedItems == null || importedItems.Count == 0)
                 {
-                    MessageBox.Show("Die CSV-Datei konnte nicht geladen werden oder enthält keine gültigen Daten.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Could not load the CSV file or it does not contain valid data.", "Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 else
                 {
-                    MessageBox.Show("Die CSV-Datei wurde erfolgreich importiert.", "Erfolg", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("CSV file was successfully imported.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                     Questionnaire_Name.Text = System.IO.Path.GetFileName(filePath);
                     Questionnaire_Name_Pannel.Visibility = Visibility.Visible;
                     currentItemCount = !string.IsNullOrWhiteSpace(importedItems[0].ItemCount.ToString()) ? importedItems[0].ItemCount : -1;
@@ -382,7 +388,7 @@ namespace TSI
         private void IndicateVibration(double rawValue, double threshold)
         {
             bool shouldVibrate = ShouldVibrate(rawValue, threshold);
-            Vibe_Label.Text = shouldVibrate ? "True" : "False";
+            Vibe_Label.Text = shouldVibrate ? "TRUE" : "FALSE";
 
             Vibe_Label.Foreground = shouldVibrate
                 ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#AFCFAB"))
@@ -468,7 +474,10 @@ namespace TSI
                 "DELETE LAST DATA VALUES" , "Delete" , "Cancel", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
             if (result == MessageBoxResult.Yes)
+            {
                 sliderDataTable.Rows.RemoveAt(sliderDataTable.Rows.Count - 1);
+                _participantView?.QuestionnaireBackward();
+            }
         }
 
         private void OnDeleteAllClicked(object sender, RoutedEventArgs e)
@@ -483,8 +492,11 @@ namespace TSI
                 $"DELETE {sliderDataTable.Rows.Count.ToString()} DATA VALUES?", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
             if (result == MessageBoxResult.Yes)
+            {
                 sliderDataTable.Rows.Clear();
-            
+                InitParticipantView();
+            }
+
         }
     }
 }

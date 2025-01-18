@@ -21,7 +21,6 @@ public class CsvParser
 
         using (var reader = new StreamReader(filePath))
         {
-            // Überspringe die Kopfzeile
             var headerLine = reader.ReadLine();
 
             while (!reader.EndOfStream)
@@ -37,8 +36,7 @@ public class CsvParser
                     );
                     return null;
                 }
-
-                // Erstelle ein neues QuestionnaireItem und füge es der Liste hinzu
+                
                 var item = new QuestionnaireItem
                 {
                     Title = string.IsNullOrWhiteSpace(values[0]) ? null : values[0],
@@ -52,8 +50,8 @@ public class CsvParser
                 if (item.Threshold > 0.5) 
                     // TODO: demote to warning
                     MessageBox.Show(
-                        "No thresholds above 50%", 
-                        "Error", MessageBoxButton.OK, MessageBoxImage.Error
+                        "There are thresholds above 0,5 (50%) in your questionnaire. ", 
+                        "THRESHOLDS BIGGER THAN 0,5", MessageBoxButton.OK, MessageBoxImage.Warning
                     );
 
                 questionnaireItems.Add(item);
