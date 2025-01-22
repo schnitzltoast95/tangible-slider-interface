@@ -1,14 +1,14 @@
 # Tangible Slider Interface
 
 ## Overview
-The Tangible Slider Interface application allows for the evaluation and configuration of questionnaires using a scalable slider system. Data is imported through a CSV file that must adhere to a specific format.
+The Tangible Slider Interface application allows for the evaluation and configuration of questionnaires using a scalable slider system.  
+**Note:** This application is only available on **Windows**.
 
 ## Installation
 1. Download the application and extract it to your preferred directory.
 2. Move the entire folder to your user's home directory:
    - On Windows: `C:\Users\<YourUsername>`
-   - On Linux/macOS: `/home/<YourUsername>`
-3. We recommend using a Folder to store the application as well as used questionnaire and conditions file (if needed).
+3. We recommend placing the application folder and the CSV files (questionnaire and conditions file, if needed) together for easy access.
 
 ## Hardware Requirements
 This application was tested on an **Arduino Nano** as the controller and the following hardware components:
@@ -45,7 +45,7 @@ Efficiency;How efficient is the product?;Inefficient;Efficient;7;0.15
 ```
 
 ## Usage
-1. Launch the application by opening the `TSI.sln` file (for developers) or the compiled `.exe` file in the `bin` folder (for end-users).
+1. Run the application on your Windows system.
 2. Connect and selected a tangible slider.
 3. Upload your CSV file to the application.
 4. Export collected data.
